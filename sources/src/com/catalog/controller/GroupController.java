@@ -1,0 +1,33 @@
+package com.catalog.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.catalog.business.Band;
+import com.catalog.business.SessionInfo;
+import com.catalog.view.ApplicationSingleton;
+
+@Controller
+@RequestMapping(value = "/group")
+public class GroupController {
+	
+	@Autowired
+	private SessionInfo sessionInfo;
+	
+	@RequestMapping(value = "/{gid}", method = RequestMethod.GET)
+	public String viewConcert(@PathVariable("gid") int gid, Model model) {
+		
+		if (!sessionInfo.getConnected())
+			return "redirect:/login?next=/group/" + gid;
+		
+		Band band = ApplicationSingleton.getApplication().getBand(gid);
+		model.addAttribute("session", sessionInfo);
+		model.addAttribute("band", band);
+		
+		return "group";
+	}
+}
